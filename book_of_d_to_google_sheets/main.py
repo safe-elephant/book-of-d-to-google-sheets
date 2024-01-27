@@ -10,10 +10,9 @@ def read_document(file_name):
     file_path = os.path.join(current_dir, file_name)
     return Document(file_path)
 
-def get_top_level_categories(document):
-    unique_top_level_categories = []
+def get_categories(document):
+    categories = []
     seen = set()
-
     for table in document.tables:
         for row in table.rows:
             for cell in row.cells:
@@ -21,13 +20,15 @@ def get_top_level_categories(document):
                     if paragraph.style.name == "Heading 1":
                         text = paragraph.text.strip()
                         if text not in seen:
-                            unique_top_level_categories.append(text)
+                            categories.append(text)
                             seen.add(text)
-                        break  # Assuming only one 'Heading 1' per cell
+                        break
+    return categories
 
-    return unique_top_level_categories
+def get_sub_categories(document):
+    sub_categories = []
 
 document = read_document("./book-of-d.docx")
-top_level_categories = get_top_level_categories(document)
+top_level_categories = get_categories(document)
 
 x = top_level_categories
