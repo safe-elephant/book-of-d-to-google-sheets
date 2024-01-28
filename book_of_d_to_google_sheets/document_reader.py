@@ -23,23 +23,26 @@ class DocumentReader:
                     # Detect main category
                     if style == "Heading 1":
                         current_category = paragraph.text.strip()
+                        current_sub_category = None
                         hazards[current_category] = {}
 
                     # Detect sub-category
-                    elif style == "Heading 2" and current_category:
+                    elif style == "Heading 2":
                         current_sub_category = paragraph.text.strip()
-                        hazards[current_category][current_sub_category] = {"To Whom": [], "Controls": []}
+                        if current_category:
+                            hazards[current_category][current_sub_category] = {"To Whom": [], "Controls": []}
 
                     # Detect "Normal" paragraphs
-                    elif style == "normal" and current_sub_category:
+                    elif style == "Normal" and current_category and current_sub_category and paragraph.runs != []:
                         is_bold = paragraph.runs[0].bold
                         text = paragraph.text.strip()
 
-                        # if text is bold it is a "To Whom" paragraph, else it is control
+                        # If text is bold, it is a "To Whom" paragraph, else it is control
                         if text != "" and is_bold:
                             hazards[current_category][current_sub_category]["To Whom"].append(text)
-                        elif text !="" and not is_bold:
+                        elif text != "" and not is_bold:
                             hazards[current_category][current_sub_category]["Controls"].append(text)
 
     return hazards
+
 
